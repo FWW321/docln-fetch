@@ -1,9 +1,9 @@
-use std::error::Error;
+use anyhow::Result;
 use std::io::{self, Write};
 use docln_fetch::{DoclnCrawler, get_user_input};
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+#[tokio::main(flavor = "current_thread")]
+async fn main() -> Result<()> {
     let crawler = DoclnCrawler::new();
     
     loop {

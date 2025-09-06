@@ -1,6 +1,6 @@
 use reqwest;
 use scraper::{Html, Selector, Element};
-use std::error::Error;
+use anyhow::Result;
 use std::fs;
 use std::path::Path;
 use crate::models::{NovelInfo, Volume, Chapter};
@@ -11,6 +11,25 @@ pub struct DoclnCrawler {
 }
 
 impl DoclnCrawler {
+    /// 通用的图片下载函数
+    async fn download_image(
+        &self,
+        image_url: &str,
+        filepath: &Path,
+        log_prefix: &str,
+    ) -> Result<()> {
+        println!("正在下载{}图片: {}", log_prefix, image_url);
+        
+        // 下载图片
+        let response = self.client.get(image_url).send().await?;
+        let image_bytes = response.bytes().await?;
+        
+        // 保存到本地
+        fs::write(filepath, &image_bytes)?;
+        
+        println!("{}图片已保存到: {}", log_prefix, filepath.display());
+        Ok(())
+    }
     pub fn new() -> Self {
         let client = reqwest::Client::builder()
             .user_agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
@@ -24,7 +43,7 @@ impl DoclnCrawler {
         }
     }
 
-    pub async fn fetch_novel_info(&self, novel_id: u32) -> Result<NovelInfo, Box<dyn Error>> {
+    pub async fn fetch_novel_info(&self, novel_id: u32) -> Result<NovelInfo> {
         let url = format!("{}/sang-tac/{}", self.base_url, novel_id);
         
         println!("正在获取: {}", url);
@@ -35,13 +54,7 @@ impl DoclnCrawler {
         self.parse_novel_info(&html_content, &url, novel_id).await
     }
 
-    async fn download_volume_cover_image(&self, image_url: &str, _volume_index: usize, volume_title: &str, epub_dir: &Path) -> Result<Option<String>, Box<dyn Error>> {
-        // 检查是否为默认的nocover图片
-        if image_url.contains("nocover") {
-            println!("卷 '{}' 使用默认封面图片，跳过下载", volume_title);
-            return Ok(None);
-        }
-        
+    async fn download_volume_cover_image(&self, image_url: &str, _volume_index: usize, volume_title: &str, epub_dir: &Path) -> Result<Option<String>> {
         // 从URL中提取文件扩展名
         let extension = Path::new(image_url)
             .extension()
@@ -61,21 +74,9 @@ impl DoclnCrawler {
         
         // 卷封面命名为卷名
         let filename = format!("{}.{}", safe_volume_title, extension);
-        let filepath = images_dir.join(&filename);
         
-        println!("正在下载卷 '{}' 的封面图片: {}", volume_title, image_url);
-        
-        // 下载图片
-        let response = self.client.get(image_url).send().await?;
-        let image_bytes = response.bytes().await?;
-        
-        // 保存到本地
-        fs::write(&filepath, &image_bytes)?;
-        
-        println!("卷 '{}' 的封面图片已保存到: {} (文件名: {})", volume_title, filepath.display(), filename);
-        
-        // 返回相对路径（相对于OEBPS目录）
-        Ok(Some(format!("images/{}", filename)))
+        // 使用通用函数下载卷封面图片
+        self.download_cover_image_common(image_url, &images_dir, &filename, &format!("卷 '{}' ", volume_title), true).await
     }
 
     async fn download_chapter_illustrations(
@@ -86,7 +87,7 @@ impl DoclnCrawler {
         volume_index: usize,
         _volume_title: &str,
         _chapter_title: &str,
-    ) -> Result<String, Box<dyn Error>> {
+    ) -> Result<String> {
         let mut modified_paragraphs = Vec::new();
         let mut illustration_counter = 1;
         
@@ -139,7 +140,7 @@ impl DoclnCrawler {
         illustration_number: usize,
         volume_index: usize,
         chapter_index: usize,
-    ) -> Result<String, Box<dyn Error>> {
+    ) -> Result<String> {
         // 从URL中提取文件扩展名
         let extension = Path::new(image_url)
             .extension()
@@ -150,19 +151,37 @@ impl DoclnCrawler {
         let filename = format!("{:03}.{}", illustration_number, extension);
         let filepath = illustrations_dir.join(&filename);
         
-        println!("正在下载插图 {}: {}", illustration_number, image_url);
-        
-        // 下载图片
-        let response = self.client.get(image_url).send().await?;
-        let image_bytes = response.bytes().await?;
-        
-        // 保存到本地
-        fs::write(&filepath, &image_bytes)?;
-        
-        println!("插图 {} 已保存到: {}", illustration_number, filepath.display());
+        // 使用通用函数下载图片
+        self.download_image(image_url, &filepath, &format!("插图 {}", illustration_number)).await?;
         
         // 返回相对路径（相对于images目录）
         Ok(format!("volume_{:03}/chapter_{:03}/{}", volume_index + 1, chapter_index + 1, filename))
+    }
+
+    /// 通用的封面图片下载函数
+    async fn download_cover_image_common(
+        &self,
+        image_url: &str,
+        images_dir: &Path,
+        filename: &str,
+        log_prefix: &str,
+        skip_default: bool,
+    ) -> Result<Option<String>> {
+        // 检查是否为默认的nocover图片
+        if skip_default && image_url.contains("nocover") {
+            println!("{}使用默认封面图片，跳过下载", log_prefix);
+            return Ok(None);
+        }
+        
+        let filepath = images_dir.join(filename);
+        
+        // 使用通用函数下载图片
+        self.download_image(image_url, &filepath, log_prefix).await?;
+        
+        println!("{}封面图片已保存到: {} (文件名: {})", log_prefix, filepath.display(), filename);
+        
+        // 返回相对路径（相对于OEBPS目录）
+        Ok(Some(format!("images/{}", filename)))
     }
 
     pub async fn fetch_chapter_content(
@@ -174,7 +193,7 @@ impl DoclnCrawler {
         chapter_title: &str,
         images_dir: &Path,
         has_illustrations: bool,
-    ) -> Result<String, Box<dyn Error>> {
+    ) -> Result<String> {
         println!("正在获取章节内容: {}", chapter_url);
         
         let response = self.client.get(chapter_url).send().await?;
@@ -317,7 +336,7 @@ impl DoclnCrawler {
         volume_title: &str,
         _novel_title: &str,
         images_dir: &Path,
-    ) -> Result<(), Box<dyn Error>> {
+    ) -> Result<()> {
         println!("\n正在处理卷 '{}' 的章节内容...", volume_title);
         
         for (chapter_index, chapter) in chapters.iter_mut().enumerate() {
@@ -353,13 +372,7 @@ impl DoclnCrawler {
         Ok(())
     }
 
-    async fn download_cover_image(&self, image_url: &str, _novel_id: u32, _title: &str, epub_dir: &Path) -> Result<Option<String>, Box<dyn Error>> {
-        // 检查是否为默认的nocover图片
-        if image_url.contains("nocover") {
-            println!("检测到默认封面图片，跳过下载");
-            return Ok(None);
-        }
-        
+    async fn download_cover_image(&self, image_url: &str, _novel_id: u32, _title: &str, epub_dir: &Path) -> Result<Option<String>> {
         // 从URL中提取文件扩展名
         let extension = Path::new(image_url)
             .extension()
@@ -372,24 +385,12 @@ impl DoclnCrawler {
         
         // 小说封面命名为cover
         let filename = format!("cover.{}", extension);
-        let filepath = images_dir.join(&filename);
         
-        println!("正在下载封面图片: {}", image_url);
-        
-        // 下载图片
-        let response = self.client.get(image_url).send().await?;
-        let image_bytes = response.bytes().await?;
-        
-        // 保存到本地
-        fs::write(&filepath, &image_bytes)?;
-        
-        println!("封面图片已保存到: {}", filepath.display());
-        
-        // 返回相对路径（相对于OEBPS目录）
-        Ok(Some(format!("images/{}", filename)))
+        // 使用通用函数下载封面图片
+        self.download_cover_image_common(image_url, &images_dir, &filename, "小说", true).await
     }
 
-    pub async fn parse_novel_info(&self, html_content: &str, url: &str, novel_id: u32) -> Result<NovelInfo, Box<dyn Error>> {
+    pub async fn parse_novel_info(&self, html_content: &str, url: &str, novel_id: u32) -> Result<NovelInfo> {
         let document = Html::parse_document(html_content);
         
         // 解析小说标题
@@ -397,7 +398,7 @@ impl DoclnCrawler {
         let title = document
             .select(&title_selector)
             .next()
-            .ok_or("未找到小说标题")?
+            .ok_or_else(|| anyhow::anyhow!("未找到小说标题"))?
             .text()
             .collect::<String>()
             .trim()
@@ -432,7 +433,7 @@ impl DoclnCrawler {
         }
 
         if author.is_empty() {
-            return Err("未找到作者信息".into());
+            return Err(anyhow::anyhow!("未找到作者信息"));
         }
 
         // 解析简介内容

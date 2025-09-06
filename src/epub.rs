@@ -1,4 +1,4 @@
-use std::error::Error;
+use anyhow::Result;
 use std::fs;
 use std::path::Path;
 use crate::models::NovelInfo;
@@ -14,7 +14,7 @@ impl EpubGenerator {
         novel_info: &NovelInfo,
         epub_dir: &Path,
         _novel_id: u32,
-    ) -> Result<(), Box<dyn Error>> {
+    ) -> Result<()> {
         // 创建EPUB标准目录
         let meta_inf_dir = epub_dir.join("META-INF");
         fs::create_dir_all(&meta_inf_dir)?;
