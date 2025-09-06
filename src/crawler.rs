@@ -114,7 +114,12 @@ impl DoclnCrawler {
                             Ok(local_path) => {
                                 // 替换原始src为本地路径（相对于images目录）
                                 let original_img_html = img_element.html();
-                                let modified_img_html = original_img_html.replace(img_src, &local_path);
+                                // 确保img标签正确闭合
+                                let modified_img_html = if original_img_html.ends_with("/>") {
+                                    original_img_html.replace(img_src, &local_path)
+                                } else {
+                                    original_img_html.replace(img_src, &local_path).replace(">", "/>")
+                                };
                                 modified_p_html = modified_p_html.replace(&original_img_html, &modified_img_html);
                                 
                                 illustration_counter += 1;
@@ -154,8 +159,8 @@ impl DoclnCrawler {
         // 使用通用函数下载图片
         self.download_image(image_url, &filepath, &format!("插图 {}", illustration_number)).await?;
         
-        // 返回相对路径（相对于images目录）
-        Ok(format!("volume_{:03}/chapter_{:03}/{}", volume_index + 1, chapter_index + 1, filename))
+        // 返回正确的相对路径（从text/volume_XXX/chapter_XXX.xhtml到images/volume_XXX/chapter_XXX/）
+        Ok(format!("../../images/volume_{:03}/chapter_{:03}/{}", volume_index + 1, chapter_index + 1, filename))
     }
 
     /// 通用的封面图片下载函数
@@ -545,7 +550,7 @@ impl DoclnCrawler {
                             
                             match self.fetch_and_process_chapters(
                                 &mut chapters,
-                                volumes.len(), // 使用当前卷数量作为索引
+                                volume_index, // 使用正确的卷索引
                                 &volume_title,
                                 &title,
                                 &images_dir,
@@ -591,6 +596,16 @@ impl DoclnCrawler {
         // 生成EPUB元数据文件
         let epub_generator = crate::epub::EpubGenerator::new();
         epub_generator.generate_epub_metadata(&novel_info, &epub_dir, novel_id).await?;
+
+        // 压缩EPUB文件夹为EPUB文件
+        match epub_generator.compress_epub(&epub_dir, &novel_info.title) {
+            Ok(epub_filename) => {
+                println!("EPUB文件生成成功: {}", epub_filename);
+            }
+            Err(e) => {
+                println!("压缩EPUB文件失败: {}", e);
+            }
+        }
 
         Ok(novel_info)
     }
