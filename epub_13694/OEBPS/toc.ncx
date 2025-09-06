@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ncx version="2005-1" xmlns="http://www.daisy.org/z3986/2005/ncx/">
+    <head>
+        <meta name="dtb:uid" content="docln:13694"/>
+        <meta name="dtb:depth" content="1"/>
+        <meta name="dtb:totalPageCount" content="0"/>
+        <meta name="dtb:maxPageNumber" content="0"/>
+    </head>
+    <docTitle>
+        <text>Nhỏ đàn em của tôi dường như đang quá nhập tâm vào vai diễn Yandere rồi thì phải?</text>
+    </docTitle>
+    <navMap>
+        <navPoint id="navPoint1" playOrder="1">
+            <navLabel>
+                <text>Tổng hợp fanart</text>
+            </navLabel>
+            <content src="text/volume_001/chapter_001.xhtml"/>
+            <navPoint id="navPoint2" playOrder="2">
+                <navLabel>
+                    <text>Ất Tỵ 2025 (1)</text>
+                </navLabel>
+                <content src="text/volume_001/chapter_001.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint3" playOrder="3">
+                <navLabel>
+                    <text>Ất Tỵ 2025 (2)</text>
+                </navLabel>
+                <content src="text/volume_001/chapter_002.xhtml"/>
+            </navPoint>
+        </navPoint>
+        <navPoint id="navPoint4" playOrder="4">
+            <navLabel>
+                <text>Tập 01</text>
+            </navLabel>
+            <content src="text/volume_002/chapter_001.xhtml"/>
+            <navPoint id="navPoint5" playOrder="5">
+                <navLabel>
+                    <text>Minh họa</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_001.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint6" playOrder="6">
+                <navLabel>
+                    <text>Mở đầu</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_002.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint7" playOrder="7">
+                <navLabel>
+                    <text>Chương 01: Lý tưởng của tôi là con dao làm bếp</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_003.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint8" playOrder="8">
+                <navLabel>
+                    <text>Chương 02: Thảo phạt hầm ngục hiếm</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_004.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint9" playOrder="9">
+                <navLabel>
+                    <text>Chương 03: Tôi đã nghĩ rằng hôm nay thật xui xẻo, nhưng không hẳn vậy</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_005.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint10" playOrder="10">
+                <navLabel>
+                    <text>Giao đoạn (1)</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_006.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint11" playOrder="11">
+                <navLabel>
+                    <text>Giao đoạn (2)</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_007.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint12" playOrder="12">
+                <navLabel>
+                    <text>Giao đoạn (3)</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_008.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint13" playOrder="13">
+                <navLabel>
+                    <text>Giao đoạn (4)</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_009.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint14" playOrder="14">
+                <navLabel>
+                    <text>Giao đoạn (5)</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_010.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint15" playOrder="15">
+                <navLabel>
+                    <text>Chương 04: Quý ông? Không. Tôi là một siêu quý ông!</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_011.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint16" playOrder="16">
+                <navLabel>
+                    <text>Chương 05: Có lẽ, tôi đã nghĩ quá nhiều rồi</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_012.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint17" playOrder="17">
+                <navLabel>
+                    <text>Chương 5.5: Tương phùng</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_013.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint18" playOrder="18">
+                <navLabel>
+                    <text>Chương 5.7: Độc tấu</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_014.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint19" playOrder="19">
+                <navLabel>
+                    <text>Chương 5.8: Nhục dục</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_015.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint20" playOrder="20">
+                <navLabel>
+                    <text>Chương 5.9: Phẫn uất</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_016.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint21" playOrder="21">
+                <navLabel>
+                    <text>Chương 06: Rốt cuộc bạn thân em gái vẫn tốt hơn cả</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_017.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint22" playOrder="22">
+                <navLabel>
+                    <text>Chương kết: Phóng thích</text>
+                </navLabel>
+                <content src="text/volume_002/chapter_018.xhtml"/>
+            </navPoint>
+        </navPoint>
+        <navPoint id="navPoint23" playOrder="23">
+            <navLabel>
+                <text>Tập 02</text>
+            </navLabel>
+            <content src="text/volume_003/chapter_001.xhtml"/>
+            <navPoint id="navPoint24" playOrder="24">
+                <navLabel>
+                    <text>Mở đầu</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_001.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint25" playOrder="25">
+                <navLabel>
+                    <text>Chương 01: Tôi muốn nói rằng, điều này thật tệ</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_002.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint26" playOrder="26">
+                <navLabel>
+                    <text>Chương 02: Tôi nguyền rủa thằng cha nào đã viết lên cái kịch bản này</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_003.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint27" playOrder="27">
+                <navLabel>
+                    <text>Chương 03: Xin chào! Tôi là cặn bã phế thải của xã hội đây! Izumi Minoru đây thưa bà con!</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_004.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint28" playOrder="28">
+                <navLabel>
+                    <text>Chương 04: Bước vội</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_005.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint29" playOrder="29">
+                <navLabel>
+                    <text>Chương 05: Thật đấy, chuyện quái gì đang xảy ra vậy?</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_006.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint30" playOrder="30">
+                <navLabel>
+                    <text>Giao đoạn (1)</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_007.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint31" playOrder="31">
+                <navLabel>
+                    <text>Giao đoạn (2)</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_008.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint32" playOrder="32">
+                <navLabel>
+                    <text>Giao đoạn (3)</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_009.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint33" playOrder="33">
+                <navLabel>
+                    <text>Giao đoạn (4)</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_010.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint34" playOrder="34">
+                <navLabel>
+                    <text>Giao đoạn (5)</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_011.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint35" playOrder="35">
+                <navLabel>
+                    <text>Giao đoạn (6)</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_012.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint36" playOrder="36">
+                <navLabel>
+                    <text>Giao đoạn (7)</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_013.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint37" playOrder="37">
+                <navLabel>
+                    <text>Chương 06: Cái ngày tệ hại này... là do tôi sao?</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_014.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint38" playOrder="38">
+                <navLabel>
+                    <text>Chương 07: Để bắt đầu chuỗi ngày vô tư lự của tôi...</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_015.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint39" playOrder="39">
+                <navLabel>
+                    <text>Chương 08: Thôi thúc</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_016.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint40" playOrder="40">
+                <navLabel>
+                    <text>Chương 09: Khoảng lặng</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_017.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint41" playOrder="41">
+                <navLabel>
+                    <text>Chương 10: Tuyển gấp cho tôi một chuyên gia tư vấn tâm lý tình cảm</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_018.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint42" playOrder="42">
+                <navLabel>
+                    <text>Chương 10.5: Sai lầm của tôi</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_019.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint43" playOrder="43">
+                <navLabel>
+                    <text>Chương 11: Một đời liêm khiết</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_020.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint44" playOrder="44">
+                <navLabel>
+                    <text>Chương 12: Hoang tưởng</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_021.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint45" playOrder="45">
+                <navLabel>
+                    <text>Chương 13: Đôi khi tôi chỉ muốn mình thật ngầu thôi mà</text>
+                </navLabel>
+                <content src="text/volume_003/chapter_022.xhtml"/>
+            </navPoint>
+        </navPoint>
+        <navPoint id="navPoint46" playOrder="46">
+            <navLabel>
+                <text>Side story</text>
+            </navLabel>
+            <content src="text/volume_004/chapter_001.xhtml"/>
+            <navPoint id="navPoint47" playOrder="47">
+                <navLabel>
+                    <text>Thiên sứ (1)</text>
+                </navLabel>
+                <content src="text/volume_004/chapter_001.xhtml"/>
+            </navPoint>
+        </navPoint>
+        <navPoint id="navPoint48" playOrder="48">
+            <navLabel>
+                <text>What if...?</text>
+            </navLabel>
+            <content src="text/volume_005/chapter_001.xhtml"/>
+            <navPoint id="navPoint49" playOrder="49">
+                <navLabel>
+                    <text>Chương mở: Chuẩn bị</text>
+                </navLabel>
+                <content src="text/volume_005/chapter_001.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint50" playOrder="50">
+                <navLabel>
+                    <text>Chương mở: Nghênh chiến</text>
+                </navLabel>
+                <content src="text/volume_005/chapter_002.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint51" playOrder="51">
+                <navLabel>
+                    <text>Chương mở: Cạm bẫy</text>
+                </navLabel>
+                <content src="text/volume_005/chapter_003.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint52" playOrder="52">
+                <navLabel>
+                    <text>Chương mở: Khách lạ</text>
+                </navLabel>
+                <content src="text/volume_005/chapter_004.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint53" playOrder="53">
+                <navLabel>
+                    <text>Chương mở: Thiên địch</text>
+                </navLabel>
+                <content src="text/volume_005/chapter_005.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint54" playOrder="54">
+                <navLabel>
+                    <text>Chương mở: Vén màn</text>
+                </navLabel>
+                <content src="text/volume_005/chapter_006.xhtml"/>
+            </navPoint>
+            <navPoint id="navPoint55" playOrder="55">
+                <navLabel>
+                    <text>Chương mở: Lằn ranh</text>
+                </navLabel>
+                <content src="text/volume_005/chapter_007.xhtml"/>
+            </navPoint>
+        </navPoint>
+    </navMap>
+</ncx>
