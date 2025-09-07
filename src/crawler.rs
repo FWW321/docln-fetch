@@ -9,7 +9,7 @@ pub use processor::ChapterProcessor;
 use anyhow::Result;
 use reqwest;
 use scraper::Html;
-use crate::epub::{Epub, Volume};
+use crate::epub::{Epub, Volume, EpubGenerator};
 
 
 pub struct DoclnCrawler {
@@ -113,18 +113,9 @@ impl DoclnCrawler {
         epub.volumes = volumes;
         
         // 生成EPUB文件
-        match crate::epub::Epub::builder()
-        .id(epub.id)
-        .title(epub.title.clone())
-        .author(epub.author.clone())
-        .url(epub.url.clone())
-        .illustrator(epub.illustrator.clone())
-        .summary(epub.summary.clone())
-        .cover_image_path(epub.cover_image_path.clone())
-        .volumes(epub.volumes.clone())
-        .tags(epub.tags.clone())
-        .epub_dir(epub_dir_name)
-        .build() {
+        match EpubGenerator::new(epub.clone())
+            .epub_dir(&epub_dir_name)
+            .generate() {
             Ok(epub_filename) => {
                 println!("EPUB文件生成成功: {}", epub_filename);
             }

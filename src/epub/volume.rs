@@ -68,7 +68,7 @@ impl Volume {
         let volume_dir = oebps_dir.join("text").join(format!("volume_{:03}", volume_index + 1));
         fs::create_dir_all(&volume_dir)?;
 
-        let chapter_filename = format!("volume_{:03}_cover.xhtml", volume_index + 1);
+        let chapter_filename = format!("chapter_000.xhtml");
         let chapter_path = volume_dir.join(chapter_filename);
 
         let mut xhtml_content = String::new();
@@ -80,7 +80,7 @@ impl Volume {
 
         xhtml_content.push_str(&self.title);
         xhtml_content.push_str(r#"</title>
-    <link rel="stylesheet" type="text/css" href="../styles/stylesheet.css"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
     <div class="cover">
@@ -88,7 +88,19 @@ impl Volume {
 
         xhtml_content.push_str(&self.title);
         xhtml_content.push_str(r#"</h1>
-    </div>
+"#);
+
+        // 插入封面图片
+        if let Some(ref cover_path) = self.cover_image_path {
+            // 计算相对路径（假设cover_path已是相对OEBPS的路径）
+            xhtml_content.push_str(&format!(
+                "        <img src=\"../../{}\" alt=\"封面\" class=\"volume-cover-img\"/>",
+                cover_path
+            ));
+            xhtml_content.push_str("\n");
+        }
+
+        xhtml_content.push_str(r#"    </div>
 </body>
 </html>"#);
 
