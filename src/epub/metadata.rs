@@ -1,7 +1,7 @@
 use anyhow::Result;
 use std::fs;
 use std::path::Path;
-use crate::crawler::NovelInfo;
+use super::Epub;
 
 pub struct MetadataGenerator;
 
@@ -30,7 +30,7 @@ impl MetadataGenerator {
     }
 
     /// 生成content.opf文件
-    pub fn generate_content_opf(&self, novel_info: &NovelInfo, oebps_dir: &Path, novel_id: u32) -> Result<()> {
+    pub fn generate_content_opf(&self, epub: &Epub, oebps_dir: &Path, novel_id: u32) -> Result<()> {
         let mut content_opf = String::new();
         
         // OPF头部
@@ -41,15 +41,15 @@ impl MetadataGenerator {
         content_opf.push_str(&format!("{}", novel_id));
         content_opf.push_str(r#"</dc:identifier>
         <dc:title>"#);
-        content_opf.push_str(&novel_info.title);
+        content_opf.push_str(&epub.title);
         content_opf.push_str(r#"</dc:title>
         <dc:language>vi</dc:language>
         <dc:creator opf:role="aut">"#);
-        content_opf.push_str(&novel_info.author);
+        content_opf.push_str(&epub.author);
         content_opf.push_str(r#"</dc:creator>"#);
         
         // 添加插画师信息
-        if let Some(illustrator) = &novel_info.illustrator {
+        if let Some(illustrator) = &epub.illustrator {
             content_opf.push_str(r#"
         <dc:contributor opf:role="ill">"#);
             content_opf.push_str(illustrator);
@@ -57,7 +57,7 @@ impl MetadataGenerator {
         }
         
         // 添加标签
-        for tag in &novel_info.tags {
+        for tag in &epub.tags {
             content_opf.push_str(r#"
         <dc:subject>"#);
             content_opf.push_str(tag);
@@ -65,10 +65,10 @@ impl MetadataGenerator {
         }
         
         // 添加简介
-        if !novel_info.summary.is_empty() {
+        if !epub.summary.is_empty() {
             content_opf.push_str(r#"
         <dc:description>"#);
-            content_opf.push_str(&novel_info.summary);
+            content_opf.push_str(&epub.summary);
             content_opf.push_str(r#"</dc:description>"#);
         }
         
@@ -87,7 +87,7 @@ impl MetadataGenerator {
         <item id="cover-image" href="images/cover.jpg" media-type="image/jpeg"/>"#);
         
         // 添加卷封面图片
-        for (i, volume) in novel_info.volumes.iter().enumerate() {
+        for (i, volume) in epub.volumes.iter().enumerate() {
             if let Some(cover_path) = &volume.cover_image_path {
                 if let Some(filename) = Path::new(cover_path).file_name() {
                     if let Some(filename_str) = filename.to_str() {
@@ -100,7 +100,7 @@ impl MetadataGenerator {
         }
         
         // 添加章节插图图片
-        for (i, volume) in novel_info.volumes.iter().enumerate() {
+        for (i, volume) in epub.volumes.iter().enumerate() {
             for (j, chapter) in volume.chapters.iter().enumerate() {
                 if chapter.has_illustrations {
                     // 为每个有插图的章节添加图片文件声明
@@ -131,7 +131,7 @@ impl MetadataGenerator {
         }
         
         // 添加章节文件
-        for (i, volume) in novel_info.volumes.iter().enumerate() {
+        for (i, volume) in epub.volumes.iter().enumerate() {
             // 为有卷封面的卷添加章节0
             if volume.cover_image_path.is_some() {
                 let chapter0_path = format!("text/volume_{:03}/chapter_000.xhtml", i + 1);
@@ -159,7 +159,7 @@ impl MetadataGenerator {
     <spine toc="ncx">"#);
         
         // 添加章节到spine - 按卷的顺序添加
-        for (i, volume) in novel_info.volumes.iter().enumerate() {
+        for (i, volume) in epub.volumes.iter().enumerate() {
             // 为有卷封面的卷添加章节0到spine
             if volume.cover_image_path.is_some() {
                 content_opf.push_str(&format!(r#"
@@ -191,7 +191,7 @@ impl MetadataGenerator {
     }
 
     /// 生成toc.ncx文件
-    pub fn generate_toc_ncx(&self, novel_info: &NovelInfo, oebps_dir: &Path, novel_id: u32) -> Result<()> {
+    pub fn generate_toc_ncx(&self, epub: &Epub, oebps_dir: &Path, novel_id: u32) -> Result<()> {
         let mut toc_ncx = String::new();
         
         toc_ncx.push_str(r#"<?xml version="1.0" encoding="UTF-8"?>
@@ -206,15 +206,15 @@ impl MetadataGenerator {
     </head>
     <docTitle>
         <text>"#);
-        toc_ncx.push_str(&novel_info.title);
+        toc_ncx.push_str(&epub.title);
         toc_ncx.push_str(r#"</text>
     </docTitle>
     <navMap>"#);
         
         // 添加章节导航 - 层级结构
         let mut nav_point_counter = 1;
-        for (volume_index, volume) in novel_info.volumes.iter().enumerate() {
-            let processed_chapters: Vec<&crate::crawler::Chapter> = volume.chapters.iter()
+        for (volume_index, volume) in epub.volumes.iter().enumerate() {
+            let processed_chapters: Vec<&crate::epub::chapter::Chapter> = volume.chapters.iter()
                 .filter(|c| c.xhtml_path.is_some())
                 .collect();
             
@@ -265,7 +265,7 @@ impl MetadataGenerator {
     }
 
     /// 生成所有元数据文件
-    pub fn generate_all_metadata(&self, novel_info: &NovelInfo, epub_dir: &Path, novel_id: u32) -> Result<()> {
+    pub fn generate_all_metadata(&self, epub: &Epub, epub_dir: &Path, novel_id: u32) -> Result<()> {
         // 创建EPUB标准目录
         let meta_inf_dir = epub_dir.join("META-INF");
         fs::create_dir_all(&meta_inf_dir)?;
@@ -276,8 +276,8 @@ impl MetadataGenerator {
         // 生成所有元数据文件
         self.generate_mimetype(epub_dir)?;
         self.generate_container_xml(&meta_inf_dir)?;
-        self.generate_content_opf(novel_info, &oebps_dir, novel_id)?;
-        self.generate_toc_ncx(novel_info, &oebps_dir, novel_id)?;
+        self.generate_content_opf(epub, &oebps_dir, novel_id)?;
+        self.generate_toc_ncx(epub, &oebps_dir, novel_id)?;
         
         println!("EPUB元数据文件已生成");
         Ok(())

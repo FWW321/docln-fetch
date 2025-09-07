@@ -9,36 +9,8 @@ pub use processor::ChapterProcessor;
 use anyhow::Result;
 use reqwest;
 use scraper::Html;
-use serde::{Serialize, Deserialize};
+use crate::epub::{Epub, Volume};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Chapter {
-    pub title: String,
-    pub url: String,
-    pub has_illustrations: bool, // 是否包含插图
-    pub xhtml_path: Option<String>, // XHTML文件路径（用于EPUB）
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Volume {
-    pub title: String,
-    pub volume_id: String,
-    pub cover_image_path: Option<String>,
-    pub chapters: Vec<Chapter>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct NovelInfo {
-    pub id: u32,
-    pub title: String,
-    pub author: String,
-    pub illustrator: Option<String>, // 插画师
-    pub summary: String, // 简介内容
-    pub cover_image_path: Option<String>, // 封面图片本地路径
-    pub volumes: Vec<Volume>, // 卷信息
-    pub tags: Vec<String>,
-    pub url: String,
-}
 
 pub struct DoclnCrawler {
     client: reqwest::Client,
@@ -62,7 +34,7 @@ impl DoclnCrawler {
         }
     }
 
-    pub async fn fetch_novel_info(&self, novel_id: u32) -> Result<NovelInfo> {
+    pub async fn fetch_novel_info(&self, novel_id: u32) -> Result<Epub> {
         let url = format!("{}/sang-tac/{}", self.base_url, novel_id);
         
         println!("正在获取: {}", url);
@@ -73,11 +45,11 @@ impl DoclnCrawler {
         self.parse_novel_info(&html_content, &url, novel_id).await
     }
 
-    pub async fn parse_novel_info(&self, html_content: &str, url: &str, novel_id: u32) -> Result<NovelInfo> {
+    pub async fn parse_novel_info(&self, html_content: &str, url: &str, novel_id: u32) -> Result<Epub> {
         let document = Html::parse_document(html_content);
         
         // 解析基本信息
-        let mut novel_info = self.parser.parse_novel_info(html_content, url, novel_id)?;
+        let mut epub = self.parser.parse_novel_info(html_content, url, novel_id)?;
         
         // 创建EPUB标准目录结构
         let epub_dir_name = format!("epub_{}", novel_id);
@@ -85,8 +57,8 @@ impl DoclnCrawler {
         
         // 解析并下载封面图片
         if let Some(cover_url) = self.parser.extract_cover_url(&document) {
-            match self.image_downloader.download_novel_cover(&cover_url, novel_id, &novel_info.title, epub_dir).await {
-                Ok(Some(path)) => novel_info.cover_image_path = Some(path),
+            match self.image_downloader.download_novel_cover(&cover_url, novel_id, &epub.title, epub_dir).await {
+                Ok(Some(path)) => epub.cover_image_path = Some(path),
                 Ok(None) => println!("使用默认封面图片，跳过下载"),
                 Err(e) => println!("下载封面图片失败: {}", e),
             }
@@ -122,7 +94,7 @@ impl DoclnCrawler {
                     &mut chapters,
                     volume_index,
                     volume_title,
-                    &novel_info.title,
+                    &epub.title,
                     &images_dir,
                 ).await {
                     Ok(()) => println!("卷 '{}' 章节处理完成", volume_title),
@@ -138,13 +110,21 @@ impl DoclnCrawler {
             });
         }
         
-        novel_info.volumes = volumes;
+        epub.volumes = volumes;
         
         // 生成EPUB文件
-        match crate::epub::EpubBuilder::new()
-            .novel_info(novel_info.clone())
-            .epub_dir(epub_dir_name)
-            .build_async().await {
+        match crate::epub::Epub::builder()
+        .id(epub.id)
+        .title(epub.title.clone())
+        .author(epub.author.clone())
+        .url(epub.url.clone())
+        .illustrator(epub.illustrator.clone())
+        .summary(epub.summary.clone())
+        .cover_image_path(epub.cover_image_path.clone())
+        .volumes(epub.volumes.clone())
+        .tags(epub.tags.clone())
+        .epub_dir(epub_dir_name)
+        .build() {
             Ok(epub_filename) => {
                 println!("EPUB文件生成成功: {}", epub_filename);
             }
@@ -153,32 +133,32 @@ impl DoclnCrawler {
             }
         }
 
-        Ok(novel_info)
+        Ok(epub)
     }
 
     pub async fn crawl_novel(&self, novel_id: u32) {
         match self.fetch_novel_info(novel_id).await {
-            Ok(novel_info) => {
-                println!("\n=== 小说信息 ===");
-                println!("标题: {}", novel_info.title);
-                println!("作者: {}", novel_info.author);
-                if let Some(illustrator) = &novel_info.illustrator {
+            Ok(epub) => {
+                println!("\n=== EPUB 信息 ===");
+                println!("标题: {}", epub.title);
+                println!("作者: {}", epub.author);
+                if let Some(illustrator) = &epub.illustrator {
                     println!("插画师: {}", illustrator);
                 }
-                if !novel_info.summary.is_empty() {
-                    println!("简介: {}", novel_info.summary);
+                if !epub.summary.is_empty() {
+                    println!("简介: {}", epub.summary);
                 }
-                if let Some(cover_path) = &novel_info.cover_image_path {
+                if let Some(cover_path) = &epub.cover_image_path {
                     println!("封面: {}", cover_path);
                 } else {
                     println!("封面: 使用默认封面");
                 }
-                println!("标签: {}", novel_info.tags.join(", "));
+                println!("标签: {}", epub.tags.join(", "));
                 
                 // 显示卷信息
-                if !novel_info.volumes.is_empty() {
+                if !epub.volumes.is_empty() {
                     println!("\n目录结构:");
-                    for (i, volume) in novel_info.volumes.iter().enumerate() {
+                    for (i, volume) in epub.volumes.iter().enumerate() {
                         println!("  ├── {} (卷 {})", volume.title, i + 1);
                         if !volume.chapters.is_empty() {
                             let processed_count = volume.chapters.iter().filter(|c| c.xhtml_path.is_some()).count();
@@ -199,13 +179,13 @@ impl DoclnCrawler {
                                 }
                             }
                         }
-                        if i < novel_info.volumes.len() - 1 {
+                        if i < epub.volumes.len() - 1 {
                             println!("  │");
                         }
                     }
                 }
                 
-                println!("URL: {}", novel_info.url);
+                println!("URL: {}", epub.url);
                 println!("==============\n");
             }
             Err(e) => {

@@ -2,7 +2,7 @@ use anyhow::Result;
 use std::fs;
 use std::path::Path;
 use scraper::{Html, Selector};
-use super::Chapter;
+use crate::epub::chapter::Chapter;
 
 pub struct ChapterProcessor {
     client: reqwest::Client,

@@ -1,11 +1,12 @@
 use anyhow::Result;
 use scraper::{Html, Selector, Element};
-use super::{NovelInfo, Chapter};
+use crate::epub::Epub;
+use crate::epub::chapter::Chapter;
 
 pub struct NovelParser;
 
 impl NovelParser {
-    pub fn parse_novel_info(&self, html_content: &str, url: &str, novel_id: u32) -> Result<NovelInfo> {
+    pub fn parse_novel_info(&self, html_content: &str, url: &str, novel_id: u32) -> Result<Epub> {
         let document = Html::parse_document(html_content);
         
         // 解析小说标题
@@ -74,8 +75,8 @@ impl NovelParser {
             }
         }
 
-        // 创建NovelInfo结构体（其他字段将在后续处理中填充）
-        let novel_info = NovelInfo {
+        // 创建Epub结构体（其他字段将在后续处理中填充）
+        let epub = Epub {
             id: novel_id,
             title,
             author,
@@ -87,7 +88,7 @@ impl NovelParser {
             url: url.to_string(),
         };
 
-        Ok(novel_info)
+        Ok(epub)
     }
 
     pub fn extract_cover_url(&self, document: &Html) -> Option<String> {
